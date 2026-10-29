@@ -1,0 +1,18 @@
+# Chess Strategy: Classical Treatise on Board Combinations and Positional Play
+
+- **Domain**: `29_gaming_and_esports` (Gaming and esports)
+- **Subtopic**: `29_01` - Game genres and mechanics
+- **Source Platform**: Project Gutenberg
+- **Publisher**: Edward Lasker (Project Gutenberg Release)
+- **Original Source URL**: https://www.gutenberg.org/ebooks/5614
+- **Download URL**: https://www.gutenberg.org/cache/epub/5614/pg5614.txt
+- **License**: Public Domain
+- **Format**: TXT
+- **File Name**: `lasker_chess_strategy.txt`
+- **File Size**: 572,835 bytes (0.55 MB)
+- **SHA-256 Checksum**: `2746ab9364067ce9332aeff8242dc9f7c8592eee53836ed73179990478c6cbdb`
+
+## Description & Verification Notes
+Comprehensive analysis of pawn structure, piece development, endgame technique, and tactical calculation.
+
+All data preserved in original authentic text representation for machine learning benchmarking.
