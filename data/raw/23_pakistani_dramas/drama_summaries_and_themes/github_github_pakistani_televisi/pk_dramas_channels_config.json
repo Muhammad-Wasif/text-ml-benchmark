@@ -1,0 +1,17 @@
+{
+  "site_title": "PK-dramas",
+  "channels": [
+    {
+      "name": "ARY Digital",
+      "query": "ARY Digital official"
+    },
+    {
+      "name": "Hum TV",
+      "query": "Hum TV official"
+    },
+    {
+      "name": "Geo Entertainment",
+      "query": "Geo Entertainment official"
+    }
+  ]
+}

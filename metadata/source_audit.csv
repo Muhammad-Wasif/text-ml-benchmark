@@ -1,0 +1,7 @@
+source_platform,dataset_count,total_size_bytes,licenses_found,audit_status
+GitHub,3,1563369,MIT; ODbL 1.0,Verified Active
+Hugging Face,10,10660808,Apache-2.0; MIT,Verified Active
+OpenML,1,8244,Public Domain (CC0 1.0),Verified Active
+Project Gutenberg,1,174311,Public Domain,Verified Active
+Wikimedia Foundation,188,4583080,CC-BY-SA 4.0,Verified Active
+Zenodo,1,2041360,CC-BY 4.0,Verified Active

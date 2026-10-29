@@ -1,0 +1,35 @@
+{
+  "name": "markdown",
+  "schema": "v1",
+  "description": "Pipeline for chunking markdown content.",
+  "metadata": {
+    "author": "Chonkie Team",
+    "version": "0.1.0"
+  },
+  "steps": [
+    {
+      "type": "process",
+      "component": "markdown"
+    },
+    {
+      "type": "chunk",
+      "component": "recursive",
+      "chunk_size": 2048
+    },
+    {
+      "type": "chunk",
+      "component": "table",
+      "chunk_size": 128
+    },
+    {
+      "type": "chunk",
+      "component": "code",
+      "chunk_size": 512
+    },
+    {
+      "type": "refine",
+      "component": "overlap",
+      "context_size": 128
+    }
+  ]
+}
