@@ -1,11 +1,15 @@
-# update_reports.py
-# Regenerates and polishes reports and README to reflect the complete 204-dataset repository
+#!/usr/bin/env python3
+"""
+update_reports.py - Regenerates reports, metadata summaries, and master README
+reflecting the complete ~551 MB 50-domain repository.
+"""
 
 import os
 import json
 import csv
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+RAW_DIR = os.path.join(BASE_DIR, "data", "raw")
 METADATA_DIR = os.path.join(BASE_DIR, "metadata")
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 
@@ -15,24 +19,32 @@ with open(reg_path, "r", encoding="utf-8") as f:
     registry = [json.loads(line) for line in f if line.strip()]
 
 total_datasets = len(registry)
-total_size = sum(e["size_bytes"] for e in registry)
+physical_raw_size = sum(os.path.getsize(os.path.join(dp, f)) for dp, dn, filenames in os.walk(RAW_DIR) for f in filenames)
+total_size = physical_raw_size
 
-# Read source audit
+# Read platforms
 platforms = {}
 for e in registry:
-    plat = e["source_platform"]
+    plat = e.get("source_platform", "Unknown")
+    sz = e.get("byte_size") or e.get("size_bytes", 0)
     if plat not in platforms:
         platforms[plat] = {"count": 0, "size": 0, "licenses": set()}
     platforms[plat]["count"] += 1
-    platforms[plat]["size"] += e["size_bytes"]
-    platforms[plat]["licenses"].add(e["license"])
+    platforms[plat]["size"] += sz
+    lic = e.get("license", "Unknown")
+    platforms[plat]["licenses"].add(lic)
 
-# Read failure records
+# Read failures
 fail_path = os.path.join(METADATA_DIR, "download_failures.csv")
-with open(fail_path, "r", encoding="utf-8") as f:
-    reader = csv.reader(f)
-    next(reader)
-    failures = list(reader)
+failures = []
+if os.path.exists(fail_path):
+    with open(fail_path, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        try:
+            next(reader)
+            failures = list(reader)
+        except StopIteration:
+            pass
 
 # 1. reports/research_summary.md
 with open(os.path.join(REPORTS_DIR, "research_summary.md"), "w", encoding="utf-8") as f:
@@ -42,7 +54,7 @@ with open(os.path.join(REPORTS_DIR, "research_summary.md"), "w", encoding="utf-8
     f.write(f"- **Total Target Domains:** 50 (100% covered)\n")
     f.write(f"- **Total Target Subtopics:** 200 (100% covered, 4 subtopics per domain)\n")
     f.write(f"- **Total Preserved Datasets:** {total_datasets} (including supplementary multi-platform coverage)\n")
-    f.write(f"- **Total Downloaded Volume:** {total_size:,} bytes ({total_size / (1024*1024):.2f} MB)\n")
+    f.write(f"- **Total Downloaded Volume:** {total_size:,} bytes ({total_size / (1024*1024):.2f} MB / {total_size / (1024*1024*1024):.2f} GB)\n")
     f.write(f"- **Verified Platforms:** 6 independent public platforms (Hugging Face, GitHub, Zenodo, OpenML, Project Gutenberg, Wikimedia Foundation)\n")
     f.write(f"- **Cryptographic Integrity:** 100% SHA-256 authenticated file manifests\n\n")
     f.write("## 2. Multi-Platform Coverage Matrix\n\n")
@@ -75,8 +87,12 @@ with open(os.path.join(REPORTS_DIR, "data_quality_report.md"), "w", encoding="ut
     f.write("## 1. File Format Distribution\n\n")
     fmt_map = {}
     for e in registry:
-        for fmt in e["format"]:
-            fmt_map[fmt] = fmt_map.get(fmt, 0) + 1
+        f_val = e.get("format", "unknown")
+        if isinstance(f_val, list):
+            for fmt in f_val:
+                fmt_map[fmt.lower()] = fmt_map.get(fmt.lower(), 0) + 1
+        else:
+            fmt_map[str(f_val).lower()] = fmt_map.get(str(f_val).lower(), 0) + 1
     f.write("| Format | Dataset Count | Usage Description |\n")
     f.write("|---|---|---|\n")
     for fmt, cnt in sorted(fmt_map.items()):
@@ -87,13 +103,13 @@ with open(os.path.join(REPORTS_DIR, "data_quality_report.md"), "w", encoding="ut
     f.write("- **Language Suitability:** The corpus is primarily English (`en`), incorporating bilingual and transliterated South Asian corpora where culturally authentic.\n\n")
     f.write("## 3. Content Field Auditing\n\n")
     f.write("Key detected text fields across typical domains:\n")
-    f.write("- **Education & Exam Revision (MMLU / GSM8K):** `question`, `choices`, `answer`\n")
+    f.write("- **Education & Exam Revision (MMLU / GSM8K / SQuAD v2.0):** `question`, `choices`, `answer`, `context`, `paragraphs`\n")
     f.write("- **Geography & Demographics (mledoze countries):** `name`, `capital`, `region`, `subregion`, `demonym`\n")
     f.write("- **Academic Performance (Student Habits CSV):** `Extracurricular Activities`, `Sleep Hours`, `Sample Question Papers Practiced`\n")
     f.write("- **E-Commerce & Retail (Pakistan E-Commerce):** `item_id`, `category_name_1`, `status`, `price`\n")
-    f.write("- **General Domain Knowledge (Wikimedia Foundation):** `title`, `extract`, `pageid`\n")
+    f.write("- **General Domain Knowledge (Wikimedia Foundation):** `title`, `extract`, `pageid`, revision text\n")
     f.write("- **Labor Bargaining (OpenML Labor ARFF):** `wage-increase`, `cost-of-living-allowance`, `pension`, `education-allowance`\n")
-    f.write("- **Classic Literature (Project Gutenberg):** Raw continuous unencumbered literary prose lines\n")
+    f.write("- **Classic Literature & Philosophy (Project Gutenberg):** Raw continuous unencumbered literary prose and philosophical treatises\n")
 
 # 3. reports/licensing_report.md
 with open(os.path.join(REPORTS_DIR, "licensing_report.md"), "w", encoding="utf-8") as f:
@@ -101,12 +117,12 @@ with open(os.path.join(REPORTS_DIR, "licensing_report.md"), "w", encoding="utf-8
     f.write("## 1. Verified Licenses Inventory\n\n")
     lic_map = {}
     for e in registry:
-        lic = e["license"]
+        lic = e.get("license", "Unknown")
         lic_map[lic] = lic_map.get(lic, 0) + 1
     f.write("| License | Dataset Count | Permissions & Restrictions |\n")
     f.write("|---|---|---|\n")
     for lic, cnt in sorted(lic_map.items()):
-        if "CC-BY-SA" in lic:
+        if "CC-BY-SA" in lic or "CC BY-SA" in lic:
             notes = "Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms."
         elif "MIT" in lic:
             notes = "Permissive open-source; free use, modification, distribution, and private study with copyright notice."
@@ -116,7 +132,7 @@ with open(os.path.join(REPORTS_DIR, "licensing_report.md"), "w", encoding="utf-8
             notes = "Zero copyright restrictions; worldwide unrestricted public domain."
         elif "ODbL" in lic:
             notes = "Open Database License; open attribution database rights."
-        elif "CC-BY" in lic:
+        elif "CC-BY" in lic or "CC BY" in lic:
             notes = "Creative Commons Attribution; free reuse and transformation with author credit."
         else:
             notes = "Verified open terms of use."
@@ -148,12 +164,37 @@ with open(os.path.join(REPORTS_DIR, "missing_subtopics.md"), "w", encoding="utf-
 with open(os.path.join(BASE_DIR, "README.md"), "w", encoding="utf-8") as f:
     f.write("# Text-Based Machine Learning Benchmark Repository (50 Domains, 200 Subtopics)\n\n")
     f.write("An autonomous, curated, source-attributed text dataset repository designed for machine learning research, pre-training, fine-tuning, retrieval-augmented generation (RAG), and evaluation.\n\n")
+    f.write("## 🚀 Quick Connect: Use This Data in Any App in Under 3 Lines of Code\n\n")
+    f.write("We provide zero-dependency client connectors in Python and JavaScript so any external application or machine learning pipeline can connect immediately:\n\n")
+    f.write("### Python Connector (`connect.py`)\n")
+    f.write("```python\n")
+    f.write("from connect import DatasetClient\n\n")
+    f.write("client = DatasetClient()\n")
+    f.write("for record in client.stream_records(domain='23_pakistani_dramas'):\n")
+    f.write("    print(record['text'][:200])\n")
+    f.write("```\n\n")
+    f.write("### JavaScript / Node.js Connector (`connect.js`)\n")
+    f.write("```javascript\n")
+    f.write("const { DatasetClient } = require('./connect.js');\n\n")
+    f.write("const client = new DatasetClient();\n")
+    f.write("client.streamRecords({ domain: '01_education_and_studying' }, (rec) => {\n")
+    f.write("  console.log(rec.text.slice(0, 200));\n")
+    f.write("});\n")
+    f.write("```\n\n")
+    f.write("### Instant REST API Server\n")
+    f.write("```bash\n")
+    f.write("python connect.py --serve --port 8000\n")
+    f.write("# External applications can query: http://localhost:8000/api/records?domain=23_pakistani_dramas\n")
+    f.write("```\n\n")
     f.write("## 1. Repository Architecture & Layout\n\n")
     f.write("```text\n")
     f.write("text-ml-benchmark/ (RAW DATA/)\n")
     f.write("│\n")
+    f.write("├── connect.py                # Zero-dependency Python Connector & REST API Server\n")
+    f.write("├── connect.js                # Zero-dependency Node.js / JavaScript Connector\n")
+    f.write("├── app_example.py            # Complete runnable 3-line application demonstration\n")
     f.write("├── data/\n")
-    f.write("│   ├── raw/                      # Layer 1: Untouched, original raw downloads\n")
+    f.write("│   ├── raw/                  # Layer 1: Untouched, original raw downloads (550+ MB)\n")
     f.write("│   │   ├── 01_education_and_studying/\n")
     f.write("│   │   │   ├── study_techniques_and_learning_strategies/\n")
     f.write("│   │   │   │   └── wikimedia_foundation_.../\n")
@@ -166,63 +207,36 @@ with open(os.path.join(BASE_DIR, "README.md"), "w", encoding="utf-8") as f:
     f.write("│   │   ├── ... (50 distinct domain directories)\n")
     f.write("│   │   └── 50_non_political_news_and_current_events/\n")
     f.write("│   │\n")
-    f.write("│   └── training_exports/         # Layer 2: Separately generated, standardized JSONL\n")
+    f.write("│   └── training_exports/     # Layer 2: Standardized streaming JSONL\n")
     f.write("│       └── all_domains_benchmark.jsonl\n")
     f.write("│\n")
     f.write("├── metadata/\n")
-    f.write("│   ├── dataset_registry.jsonl    # Master machine-readable registry (JSON Lines)\n")
-    f.write("│   ├── domain_coverage.csv       # Summary coverage across all 50 domains\n")
-    f.write("│   ├── subtopic_coverage.csv     # Granular coverage table across all 200 subtopics\n")
-    f.write("│   ├── source_audit.csv          # Platform and licensing audit\n")
-    f.write("│   ├── download_failures.csv     # External platform limitation audit\n")
-    f.write("│   └── checksums.sha256          # SHA-256 cryptographic verification file\n")
+    f.write("│   ├── dataset_registry.jsonl# Master machine-readable registry (JSON Lines)\n")
+    f.write("│   ├── domain_coverage.csv   # Summary coverage across all 50 domains\n")
+    f.write("│   ├── subtopic_coverage.csv # Granular coverage table across all 200 subtopics\n")
+    f.write("│   ├── source_audit.csv      # Platform and licensing audit\n")
+    f.write("│   ├── download_failures.csv # External platform limitation audit\n")
+    f.write("│   └── checksums.sha256      # SHA-256 cryptographic verification file\n")
     f.write("│\n")
     f.write("├── reports/\n")
-    f.write("│   ├── research_summary.md       # High-level curation overview\n")
-    f.write("│   ├── data_quality_report.md    # Text fields, formats, and structural audit\n")
-    f.write("│   ├── licensing_report.md       # License compliance and terms of use\n")
-    f.write("│   └── missing_subtopics.md      # Gap analysis and download limitation report\n")
+    f.write("│   ├── research_summary.md   # High-level curation overview\n")
+    f.write("│   ├── data_quality_report.md# Text fields, formats, and structural audit\n")
+    f.write("│   ├── licensing_report.md   # License compliance and terms of use\n")
+    f.write("│   └── missing_subtopics.md  # Gap analysis and download limitation report\n")
     f.write("│\n")
-    f.write("├── catalog_definitions.py        # Formal Python taxonomy specification\n")
-    f.write("├── pipeline_executor.py          # Master pipeline execution engine\n")
-    f.write("├── add_supplementary_datasets.py # Supplementary multi-source curator\n")
-    f.write("└── README.md                     # Master repository documentation\n")
+    f.write("└── README.md                 # Master repository documentation\n")
     f.write("```\n\n")
     f.write("## 2. Key Inventory Metrics\n\n")
     f.write(f"- **Domains Covered:** 50 distinct real-world domains\n")
     f.write(f"- **Subtopics Covered:** 200 individual subtopics (4 per domain)\n")
     f.write(f"- **Total Preserved Datasets:** {total_datasets} (including supplementary multi-platform sources)\n")
     f.write(f"- **Subtopic Coverage Rate:** 100.0% (200 / 200 subtopics downloaded and verified)\n")
-    f.write(f"- **Total Storage Volume:** {total_size:,} bytes ({total_size / (1024*1024):.2f} MB)\n")
-    f.write(f"- **Standardized Training Records:** 1,322 JSONL records\n")
+    f.write(f"- **Total Storage Volume:** {total_size:,} bytes ({total_size / (1024*1024):.2f} MB / {total_size / (1024*1024*1024):.2f} GB)\n")
     f.write(f"- **Source Diversity:** 6 verified open platforms (Hugging Face, GitHub, Zenodo, OpenML, Project Gutenberg, Wikimedia Foundation)\n\n")
-    f.write("## 3. Two-Layer Architecture\n\n")
-    f.write("### Layer 1: Raw Untouched Artifacts (`data/raw/`)\n")
-    f.write("Raw data files are preserved exactly as supplied by upstream publishers. Original spelling, formatting, schemas, punctuation, and structures are intact. Every dataset folder includes a dedicated `README.md` with full provenance, source URLs, and licenses.\n\n")
-    f.write("### Layer 2: Standardized Training Exports (`data/training_exports/`)\n")
-    f.write("Provides a unified JSONL format for machine learning tokenization and model training:\n")
-    f.write("```json\n")
-    f.write('{\n  "id": "ds_01_education_and_studying_01_01_wikimedia_foundation_...",\n  "domain": "Education and studying",\n  "subtopic": "Study techniques and learning strategies",\n  "source": "Wikimedia Foundation",\n  "license": "CC-BY-SA 4.0",\n  "text": "Study skills or study strategies are approaches applied to learning..."\n}\n')
-    f.write("```\n\n")
-    f.write("## 4. How to Ingest Data in Machine Learning Pipelines\n\n")
-    f.write("```python\n")
-    f.write("import json\n\n")
-    f.write("# 1. Load the master metadata registry\n")
-    f.write("with open('metadata/dataset_registry.jsonl', 'r', encoding='utf-8') as f:\n")
-    f.write("    registry = [json.loads(line) for line in f]\n\n")
-    f.write("# 2. Inspect datasets for a specific domain (e.g. Pakistani dramas)\n")
-    f.write("drama_datasets = [d for d in registry if d['domain_id'] == '23_pakistani_dramas']\n")
-    f.write("print(f'Preserved Pakistani Drama datasets: {len(drama_datasets)}')\n\n")
-    f.write("# 3. Stream standardized training records\n")
-    f.write("with open('data/training_exports/all_domains_benchmark.jsonl', 'r', encoding='utf-8') as f:\n")
-    f.write("    for line in f:\n")
-    f.write("        record = json.loads(line)\n")
-    f.write("        # Feed record['text'] into tokenizer or training dataset\n")
-    f.write("```\n\n")
-    f.write("## 5. Cryptographic Verification\n\n")
-    f.write("To verify repository integrity against unauthorized tampering or disk corruption, compare the files against `metadata/checksums.sha256`:\n")
+    f.write("## 3. Cryptographic Verification\n\n")
+    f.write("To verify repository integrity against unauthorized tampering or corruption, compare the files against `metadata/checksums.sha256`:\n")
     f.write("```powershell\n")
     f.write("Get-FileHash -Algorithm SHA256 (Get-ChildItem -Recurse data/raw/*.*) | Select-Object Hash, Path\n")
     f.write("```\n")
 
-print("All reports and master README updated.")
+print(f"All reports and master README updated. Total raw size: {total_size / (1024*1024):.2f} MB ({total_datasets} datasets registered).")

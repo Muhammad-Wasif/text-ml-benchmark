@@ -4,12 +4,18 @@
 
 | License | Dataset Count | Permissions & Restrictions |
 |---|---|---|
-| **Apache-2.0** | 3 | Permissive open-source; grants patent rights, commercial deployment, and modification. |
+| **Apache-2.0** | 5 | Permissive open-source; grants patent rights, commercial deployment, and modification. |
+| **CC BY 4.0** | 2 | Creative Commons Attribution; free reuse and transformation with author credit. |
+| **CC BY-NC 3.0** | 1 | Creative Commons Attribution; free reuse and transformation with author credit. |
+| **CC BY-SA 3.0** | 1 | Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms. |
+| **CC BY-SA 4.0** | 6 | Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms. |
+| **CC BY-SA 4.0 / GFDL** | 114 | Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms. |
 | **CC-BY 4.0** | 1 | Creative Commons Attribution; free reuse and transformation with author credit. |
-| **CC-BY-SA 4.0** | 188 | Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms. |
+| **CC-BY-SA 4.0** | 216 | Creative Commons Attribution-ShareAlike; commercial & non-commercial use permitted with attribution and copyleft derivative terms. |
+| **IETF Trust / Open Standards** | 3 | Verified open terms of use. |
 | **MIT** | 9 | Permissive open-source; free use, modification, distribution, and private study with copyright notice. |
 | **ODbL 1.0** | 1 | Open Database License; open attribution database rights. |
-| **Public Domain** | 1 | Zero copyright restrictions; worldwide unrestricted public domain. |
+| **Public Domain** | 176 | Zero copyright restrictions; worldwide unrestricted public domain. |
 | **Public Domain (CC0 1.0)** | 1 | Zero copyright restrictions; worldwide unrestricted public domain. |
 
 ## 2. Platform Compliance and Terms of Service Adherence

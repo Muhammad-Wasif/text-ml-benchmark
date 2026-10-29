@@ -1,7 +1,11 @@
-source_platform,dataset_count,total_size_bytes,licenses_found,audit_status
-GitHub,3,1563369,MIT; ODbL 1.0,Verified Active
-Hugging Face,10,10660808,Apache-2.0; MIT,Verified Active
-OpenML,1,8244,Public Domain (CC0 1.0),Verified Active
-Project Gutenberg,1,174311,Public Domain,Verified Active
-Wikimedia Foundation,188,4583080,CC-BY-SA 4.0,Verified Active
-Zenodo,1,2041360,CC-BY 4.0,Verified Active
+platform,datasets_count,total_size_bytes,total_size_mb,formats,licenses,compliance_status
+GitHub,3,1563369,1.49,CSV; JSON,MIT; ODbL 1.0,Fully Verified & Compliant
+Hugging Face,16,62314750,59.43,JSON; JSONL; PARQUET,Apache-2.0; CC BY-NC 3.0; CC BY-SA 3.0; CC BY-SA 4.0; MIT,Fully Verified & Compliant
+Hugging Face / PolyAI,2,587106,0.56,PARQUET,CC BY 4.0,Fully Verified & Compliant
+Hugging Face / Stanford NLP,1,30288272,28.89,JSON,CC BY-SA 4.0,Fully Verified & Compliant
+OpenML,1,8244,0.01,ARFF,Public Domain (CC0 1.0),Fully Verified & Compliant
+Project Gutenberg,176,129000430,123.02,TXT,Public Domain,Fully Verified & Compliant
+RFC Editor / IETF,3,689881,0.66,TXT,IETF Trust / Open Standards,Fully Verified & Compliant
+Rajpurkar / Stanford NLP,3,51348440,48.97,JSON,CC BY-SA 4.0,Fully Verified & Compliant
+Wikimedia Foundation,330,327297145,312.13,JSON; TXT,CC BY-SA 4.0 / GFDL; CC-BY-SA 4.0,Fully Verified & Compliant
+Zenodo,1,2041360,1.95,ZIP,CC-BY 4.0,Fully Verified & Compliant

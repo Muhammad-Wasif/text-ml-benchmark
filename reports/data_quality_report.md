@@ -6,9 +6,10 @@
 |---|---|---|
 | **ARFF** | 1 | Structured records, encyclopedic extractions, or benchmark rows |
 | **CSV** | 1 | Structured records, encyclopedic extractions, or benchmark rows |
-| **JSON** | 199 | Structured records, encyclopedic extractions, or benchmark rows |
+| **JSON** | 231 | Structured records, encyclopedic extractions, or benchmark rows |
 | **JSONL** | 1 | Structured records, encyclopedic extractions, or benchmark rows |
-| **TXT** | 1 | Structured records, encyclopedic extractions, or benchmark rows |
+| **PARQUET** | 8 | Structured records, encyclopedic extractions, or benchmark rows |
+| **TXT** | 293 | Structured records, encyclopedic extractions, or benchmark rows |
 | **ZIP** | 1 | Structured records, encyclopedic extractions, or benchmark rows |
 
 ## 2. Textual Richness and Linguistic Scope
@@ -20,10 +21,10 @@
 ## 3. Content Field Auditing
 
 Key detected text fields across typical domains:
-- **Education & Exam Revision (MMLU / GSM8K):** `question`, `choices`, `answer`
+- **Education & Exam Revision (MMLU / GSM8K / SQuAD v2.0):** `question`, `choices`, `answer`, `context`, `paragraphs`
 - **Geography & Demographics (mledoze countries):** `name`, `capital`, `region`, `subregion`, `demonym`
 - **Academic Performance (Student Habits CSV):** `Extracurricular Activities`, `Sleep Hours`, `Sample Question Papers Practiced`
 - **E-Commerce & Retail (Pakistan E-Commerce):** `item_id`, `category_name_1`, `status`, `price`
-- **General Domain Knowledge (Wikimedia Foundation):** `title`, `extract`, `pageid`
+- **General Domain Knowledge (Wikimedia Foundation):** `title`, `extract`, `pageid`, revision text
 - **Labor Bargaining (OpenML Labor ARFF):** `wage-increase`, `cost-of-living-allowance`, `pension`, `education-allowance`
-- **Classic Literature (Project Gutenberg):** Raw continuous unencumbered literary prose lines
+- **Classic Literature & Philosophy (Project Gutenberg):** Raw continuous unencumbered literary prose and philosophical treatises

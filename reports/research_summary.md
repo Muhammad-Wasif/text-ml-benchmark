@@ -6,8 +6,8 @@ This research initiative successfully designed, discovered, verified, downloaded
 
 - **Total Target Domains:** 50 (100% covered)
 - **Total Target Subtopics:** 200 (100% covered, 4 subtopics per domain)
-- **Total Preserved Datasets:** 204 (including supplementary multi-platform coverage)
-- **Total Downloaded Volume:** 19,031,172 bytes (18.15 MB)
+- **Total Preserved Datasets:** 536 (including supplementary multi-platform coverage)
+- **Total Downloaded Volume:** 577,712,277 bytes (550.95 MB / 0.54 GB)
 - **Verified Platforms:** 6 independent public platforms (Hugging Face, GitHub, Zenodo, OpenML, Project Gutenberg, Wikimedia Foundation)
 - **Cryptographic Integrity:** 100% SHA-256 authenticated file manifests
 
@@ -16,10 +16,14 @@ This research initiative successfully designed, discovered, verified, downloaded
 | Platform | Preserved Datasets | Volume (Bytes) | Formats | Verified Licenses |
 |---|---|---|---|---|
 | **GitHub** | 3 | 1,563,369 | JSON, CSV, ARFF, Parquet, TXT, ZIP | MIT; ODbL 1.0 |
-| **Hugging Face** | 10 | 10,660,808 | JSON, CSV, ARFF, Parquet, TXT, ZIP | Apache-2.0; MIT |
+| **Hugging Face** | 16 | 62,314,750 | JSON, CSV, ARFF, Parquet, TXT, ZIP | Apache-2.0; CC BY-NC 3.0; CC BY-SA 3.0; CC BY-SA 4.0; MIT |
+| **Hugging Face / PolyAI** | 2 | 587,106 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC BY 4.0 |
+| **Hugging Face / Stanford NLP** | 1 | 30,288,272 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC BY-SA 4.0 |
 | **OpenML** | 1 | 8,244 | JSON, CSV, ARFF, Parquet, TXT, ZIP | Public Domain (CC0 1.0) |
-| **Project Gutenberg** | 1 | 174,311 | JSON, CSV, ARFF, Parquet, TXT, ZIP | Public Domain |
-| **Wikimedia Foundation** | 188 | 4,583,080 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC-BY-SA 4.0 |
+| **Project Gutenberg** | 176 | 129,000,430 | JSON, CSV, ARFF, Parquet, TXT, ZIP | Public Domain |
+| **RFC Editor / IETF** | 3 | 689,881 | JSON, CSV, ARFF, Parquet, TXT, ZIP | IETF Trust / Open Standards |
+| **Rajpurkar / Stanford NLP** | 3 | 51,348,440 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC BY-SA 4.0 |
+| **Wikimedia Foundation** | 330 | 327,297,145 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC BY-SA 4.0 / GFDL; CC-BY-SA 4.0 |
 | **Zenodo** | 1 | 2,041,360 | JSON, CSV, ARFF, Parquet, TXT, ZIP | CC-BY 4.0 |
 
 ## 3. Coverage by Broad Category (50 Domains, 200 Subtopics)
